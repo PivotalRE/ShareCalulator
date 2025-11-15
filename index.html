@@ -3,40 +3,434 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Share Calculator</title>
+  <title>EGAG Solutions – Share Calculator</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-    <h1 class="text-2xl font-bold mb-6">Share Calculator</h1>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white rounded-2xl shadow-xl max-w-4xl w-full mx-4 my-8 p-6 md:p-10">
+    <!-- Header -->
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Share Calculator
+      </h1>
+      <p class="text-gray-600 text-sm">
+        Quickly calculate how much EGAG SOLUTIONS owes you across multiple onboarded projects.
+      </p>
+    </header>
 
-    <label class="block mb-2 font-medium">Total Amount</label>
-    <input id="total" type="number" class="w-full p-2 border rounded mb-4" placeholder="Enter total amount">
+    <!-- User name -->
+    <section class="mb-6 border border-gray-200 rounded-xl p-4">
+      <h2 class="text-lg font-semibold mb-3 text-gray-800">Your Info</h2>
+      <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">
+        Name (only asked once)
+      </label>
+      <input
+        id="userName"
+        type="text"
+        class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Enter your name"
+      />
+    </section>
 
-    <label class="block mb-2 font-medium">Investor Shares</label>
-    <input id="shares" type="number" class="w-full p-2 border rounded mb-4" placeholder="Enter shares (%)">
+    <!-- Backend settings -->
+    <section class="mb-6 border border-gray-200 rounded-xl p-4 bg-gray-50">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-semibold text-gray-800">Back-end Settings</h2>
+        <span class="text-xs text-gray-500">
+          Adjust only if the formula changes
+        </span>
+      </div>
 
-    <button onclick="calculateShare()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-      Calculate
-    </button>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Fixed Deduction (%) <span class="text-xs text-gray-500">(default 40)</span>
+          </label>
+          <input
+            id="fixedPercent"
+            type="number"
+            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value="40"
+            min="0"
+            max="100"
+            step="0.01"
+          />
+        </div>
 
-    <div id="result" class="mt-4 text-xl font-semibold text-green-600"></div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Variable Cost (%) <span class="text-xs text-gray-500">(default 20)</span>
+          </label>
+          <input
+            id="variablePercent"
+            type="number"
+            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value="20"
+            min="0"
+            max="100"
+            step="0.01"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Misc Deductions per Project (PKR)
+          </label>
+          <input
+            id="miscDeductions"
+            type="number"
+            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value="0"
+            min="0"
+            step="1"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Project input -->
+    <section class="mb-8 border border-gray-200 rounded-xl p-4">
+      <h2 class="text-lg font-semibold mb-4 text-gray-800">
+        Add Project (Front End Inputs)
+      </h2>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Gross Amount of Project Onboarded (PKR)
+          </label>
+          <input
+            id="grossAmount"
+            type="number"
+            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. 210000"
+            min="0"
+            step="1"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Salary (PKR)
+          </label>
+          <input
+            id="salary"
+            type="number"
+            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. 45000"
+            min="0"
+            step="1"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Your Share (%)
+          </label>
+          <input
+            id="sharePercent"
+            type="number"
+            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="0 - 100 e.g. 50"
+            min="0"
+            max="100"
+            step="0.01"
+          />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onclick="addProject()"
+        class="mt-4 inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition"
+      >
+        + Add Project
+      </button>
+
+      <p id="inputError" class="mt-2 text-sm text-red-500 hidden"></p>
+    </section>
+
+    <!-- Projects list -->
+    <section class="mb-8">
+      <h2 class="text-lg font-semibold mb-3 text-gray-800">Projects Added</h2>
+      <div class="overflow-x-auto border border-gray-200 rounded-xl">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left font-medium text-gray-700">#</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-700">Gross (PKR)</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-700">Salary (PKR)</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-700">Share (%)</th>
+              <th class="px-4 py-2 text-right font-medium text-gray-700">Amount Owed (PKR)</th>
+            </tr>
+          </thead>
+          <tbody id="projectsTableBody">
+            <tr id="noProjectsRow">
+              <td colspan="5" class="px-4 py-3 text-center text-gray-400">
+                No projects added yet.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Actions & total -->
+    <section class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <button
+        type="button"
+        onclick="completeCalculation()"
+        class="inline-flex items-center justify-center px-5 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition"
+      >
+        ✅ Complete & Show Total
+      </button>
+
+      <button
+        type="button"
+        onclick="toggleDetails()"
+        id="toggleDetailsBtn"
+        class="inline-flex items-center justify-center px-4 py-2.5 border border-gray-300 text-sm rounded-lg text-gray-700 hover:bg-gray-50 transition"
+      >
+        Show calculation details
+      </button>
+    </section>
+
+    <!-- Summary -->
+    <section id="summaryCard" class="mb-6 hidden">
+      <div class="border border-green-200 bg-green-50 rounded-xl p-4">
+        <h2 class="text-lg font-semibold text-green-800 mb-1">
+          Summary
+        </h2>
+        <p id="summaryText" class="text-sm text-green-900"></p>
+      </div>
+    </section>
+
+    <!-- Details (hidden by default) -->
+    <section
+      id="detailsSection"
+      class="hidden border border-gray-200 rounded-xl p-4 bg-gray-50"
+    >
+      <h2 class="text-lg font-semibold mb-3 text-gray-800">
+        Backend Calculation Details
+      </h2>
+      <div id="detailsContent" class="space-y-4 text-sm text-gray-800"></div>
+    </section>
   </div>
 
   <script>
-    function calculateShare() {
-      const total = Number(document.getElementById("total").value);
-      const shares = Number(document.getElementById("shares").value);
+    let projects = [];
 
-      if (!total || !shares) {
-        document.getElementById("result").textContent = "Please enter valid values.";
+    function formatPKR(value) {
+      if (isNaN(value)) return "PKR 0";
+      return "PKR " + value.toLocaleString("en-PK", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function getSettings() {
+      const fixedPercent = Number(document.getElementById("fixedPercent").value) || 0;
+      const variablePercent = Number(document.getElementById("variablePercent").value) || 0;
+      const miscDeductions = Number(document.getElementById("miscDeductions").value) || 0;
+
+      return { fixedPercent, variablePercent, miscDeductions };
+    }
+
+    function addProject() {
+      const name = document.getElementById("userName").value.trim();
+      const gross = Number(document.getElementById("grossAmount").value);
+      const salary = Number(document.getElementById("salary").value);
+      const sharePercent = Number(document.getElementById("sharePercent").value);
+
+      const errorEl = document.getElementById("inputError");
+      errorEl.classList.add("hidden");
+      errorEl.textContent = "";
+
+      if (!name) {
+        errorEl.textContent = "Please enter your name first.";
+        errorEl.classList.remove("hidden");
         return;
       }
 
-      const result = (total * shares) / 100;
-      document.getElementById("result").textContent = 
-        `Investor Share: $${result.toFixed(2)}`;
+      if (!gross || gross <= 0) {
+        errorEl.textContent = "Please enter a valid gross amount.";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      if (salary < 0 || isNaN(salary)) {
+        errorEl.textContent = "Please enter a valid salary (0 or more).";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      if (isNaN(sharePercent) || sharePercent < 0 || sharePercent > 100) {
+        errorEl.textContent = "Share must be between 0 and 100.";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      const settings = getSettings();
+
+      // Calculate backend steps
+      const fixedDeduction = (settings.fixedPercent / 100) * gross;
+      const afterFixed = gross - fixedDeduction;
+
+      const afterSalary = afterFixed - salary;
+
+      const variableDeduction = (settings.variablePercent / 100) * afterSalary;
+      const afterVariable = afterSalary - variableDeduction;
+
+      const afterMisc = afterVariable - settings.miscDeductions;
+
+      const baseForShare = afterMisc; // you can Math.max(afterMisc, 0) if you never want negative
+      const finalAmount = baseForShare * (sharePercent / 100);
+
+      const projectIndex = projects.length + 1;
+
+      // Save project
+      const project = {
+        index: projectIndex,
+        gross,
+        salary,
+        sharePercent,
+        finalAmount,
+        steps: {
+          fixedPercent: settings.fixedPercent,
+          variablePercent: settings.variablePercent,
+          miscDeductions: settings.miscDeductions,
+          fixedDeduction,
+          afterFixed,
+          afterSalary,
+          variableDeduction,
+          afterVariable,
+          afterMisc,
+          baseForShare,
+        },
+      };
+
+      projects.push(project);
+      updateProjectsTable();
+      updateDetails();
+
+      // Clear project input fields (name stays)
+      document.getElementById("grossAmount").value = "";
+      document.getElementById("salary").value = "";
+      document.getElementById("sharePercent").value = "";
+    }
+
+    function updateProjectsTable() {
+      const tbody = document.getElementById("projectsTableBody");
+      const noRow = document.getElementById("noProjectsRow");
+
+      if (projects.length === 0) {
+        if (!noRow) {
+          const row = document.createElement("tr");
+          row.id = "noProjectsRow";
+          row.innerHTML =
+            '<td colspan="5" class="px-4 py-3 text-center text-gray-400">No projects added yet.</td>';
+          tbody.appendChild(row);
+        }
+        return;
+      }
+
+      if (noRow) {
+        noRow.remove();
+      }
+
+      tbody.innerHTML = "";
+
+      projects.forEach((p) => {
+        const tr = document.createElement("tr");
+        tr.className = "border-t border-gray-100";
+
+        tr.innerHTML = `
+          <td class="px-4 py-2 text-gray-700">${p.index}</td>
+          <td class="px-4 py-2 text-gray-700">${formatPKR(p.gross)}</td>
+          <td class="px-4 py-2 text-gray-700">${formatPKR(p.salary)}</td>
+          <td class="px-4 py-2 text-gray-700">${p.sharePercent.toFixed(2)}%</td>
+          <td class="px-4 py-2 text-right font-semibold text-green-700">
+            ${formatPKR(p.finalAmount)}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function completeCalculation() {
+      const name = document.getElementById("userName").value.trim();
+      const summaryCard = document.getElementById("summaryCard");
+      const summaryText = document.getElementById("summaryText");
+
+      if (!name) {
+        alert("Please enter your name before completing.");
+        return;
+      }
+
+      if (projects.length === 0) {
+        alert("Please add at least one project before completing.");
+        return;
+      }
+
+      const total = projects.reduce((sum, p) => sum + p.finalAmount, 0);
+
+      summaryCard.classList.remove("hidden");
+      summaryText.innerHTML = `
+        Congratulations ${name}! 🎉<br/>
+        EGAG SOLUTIONS owes you <span class="font-bold">${formatPKR(total)}</span>
+        across <span class="font-semibold">${projects.length}</span> project(s).<br/>
+        You can click "Show calculation details" to see exactly how each amount was calculated.
+      `;
+    }
+
+    function toggleDetails() {
+      const section = document.getElementById("detailsSection");
+      const btn = document.getElementById("toggleDetailsBtn");
+
+      const isHidden = section.classList.contains("hidden");
+      if (isHidden) {
+        section.classList.remove("hidden");
+        btn.textContent = "Hide calculation details";
+      } else {
+        section.classList.add("hidden");
+        btn.textContent = "Show calculation details";
+      }
+    }
+
+    function updateDetails() {
+      const content = document.getElementById("detailsContent");
+      content.innerHTML = "";
+
+      if (projects.length === 0) {
+        content.innerHTML =
+          '<p class="text-gray-500">No projects added yet. Add a project to see details.</p>';
+        return;
+      }
+
+      projects.forEach((p) => {
+        const s = p.steps;
+        const div = document.createElement("div");
+        div.className = "border border-gray-200 rounded-lg p-3 bg-white shadow-sm";
+
+        div.innerHTML = `
+          <h3 class="font-semibold mb-1 text-gray-800">Project #${p.index}</h3>
+          <p class="text-gray-700">
+            1) Gross Amount: <strong>${formatPKR(p.gross)}</strong><br/>
+            2) After fixed deduction (${s.fixedPercent.toFixed(2)}%):<br/>
+            &nbsp;&nbsp;${formatPKR(p.gross)} - ${s.fixedPercent.toFixed(2)}% of gross = <strong>${formatPKR(s.afterFixed)}</strong><br/>
+            3) After salary: <br/>
+            &nbsp;&nbsp;${formatPKR(s.afterFixed)} - ${formatPKR(p.salary)} = <strong>${formatPKR(s.afterSalary)}</strong><br/>
+            4) After variable cost (${s.variablePercent.toFixed(2)}%):<br/>
+            &nbsp;&nbsp;${formatPKR(s.afterSalary)} - ${s.variablePercent.toFixed(2)}% of that = <strong>${formatPKR(s.afterVariable)}</strong><br/>
+            5) After misc deductions (${formatPKR(s.miscDeductions)}):<br/>
+            &nbsp;&nbsp;${formatPKR(s.afterVariable)} - ${formatPKR(s.miscDeductions)} = <strong>${formatPKR(s.afterMisc)}</strong><br/>
+            6) Your share (${p.sharePercent.toFixed(2)}% of ${formatPKR(s.baseForShare)}):<br/>
+            &nbsp;&nbsp;Final amount owed = <strong>${formatPKR(p.finalAmount)}</strong>
+          </p>
+        `;
+        content.appendChild(div);
+      });
     }
   </script>
 </body>
