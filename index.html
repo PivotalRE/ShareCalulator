@@ -33,12 +33,12 @@
       />
     </section>
 
-    <!-- Backend settings -->
+    <!-- Backend settings (read-only) -->
     <section class="mb-6 border border-gray-200 rounded-xl p-4 bg-gray-50">
       <div class="flex items-center justify-between mb-2">
         <h2 class="text-lg font-semibold text-gray-800">Back-end Settings</h2>
         <span class="text-xs text-gray-500">
-          Adjust only if the formula changes
+          Adjust only if the formula changes (locked for users)
         </span>
       </div>
 
@@ -50,11 +50,12 @@
           <input
             id="fixedPercent"
             type="number"
-            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full p-2.5 border rounded-lg bg-gray-100 cursor-not-allowed focus:outline-none"
             value="40"
             min="0"
             max="100"
             step="0.01"
+            readonly
           />
         </div>
 
@@ -65,11 +66,12 @@
           <input
             id="variablePercent"
             type="number"
-            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full p-2.5 border rounded-lg bg-gray-100 cursor-not-allowed focus:outline-none"
             value="20"
             min="0"
             max="100"
             step="0.01"
+            readonly
           />
         </div>
 
@@ -80,10 +82,11 @@
           <input
             id="miscDeductions"
             type="number"
-            class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full p-2.5 border rounded-lg bg-gray-100 cursor-not-allowed focus:outline-none"
             value="0"
             min="0"
             step="1"
+            readonly
           />
         </div>
       </div>
@@ -284,7 +287,7 @@
 
       const afterMisc = afterVariable - settings.miscDeductions;
 
-      const baseForShare = afterMisc; // you can Math.max(afterMisc, 0) if you never want negative
+      const baseForShare = afterMisc;
       const finalAmount = baseForShare * (sharePercent / 100);
 
       const projectIndex = projects.length + 1;
